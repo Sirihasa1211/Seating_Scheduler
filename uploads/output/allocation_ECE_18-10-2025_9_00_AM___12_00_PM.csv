@@ -1,0 +1,4 @@
+Department,Section,Room,RollRange,TotalStudents
+ECE,A,Room3,ECE_A01 - ECE_A20,18
+ECE,B,Room1,ECE_B01 - ECE_B08,8
+ECE,B,Room4,ECE_B09 - ECE_B20,12

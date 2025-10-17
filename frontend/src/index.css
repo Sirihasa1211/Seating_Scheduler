@@ -1,0 +1,102 @@
+/* Tailwind base imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------------------- Global Styles -------------------- */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+  color: #111827; /* default text color */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+  background-color: #ffffff;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Inputs */
+input[type="file"] {
+  margin: 0.5rem 0;
+  padding: 0.25rem;
+}
+
+/* Progress bar styling */
+.progress-container {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  height: 1.5rem;
+  background-color: #3b82f6; /* Tailwind blue-500 */
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+/* Responsive container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Metrics charts wrapper */
+.metrics-chart {
+  margin-top: 2rem;
+}
+
+/* Download links */
+a {
+  text-decoration: none;
+  color: #3b82f6;
+}
+
+a:hover {
+  text-decoration: underline;
+}

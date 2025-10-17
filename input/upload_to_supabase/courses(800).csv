@@ -1,0 +1,9 @@
+Department,CourseCode,CourseName,ExamDate,ExamTime,Year
+CSE,CS301,Data Structures,18-10-2025,9:00 AM-12:00 PM,1
+CSE,CS302,Operating Systems,18-10-2025,2:00 PM-5:00 PM,2
+ECE,EC201,Digital Electronics,18-10-2025,9:00 AM-12:00 PM,1
+ECE,EC202,Signals & Systems,18-10-2025,2:00 PM-5:00 PM,2
+MECH,ME101,Mechanics,19-10-2025,9:00 AM-12:00 PM,3
+MECH,ME102,Thermodynamics,19-10-2025,2:00 PM-5:00 PM,4
+CSE,CS305,Computer Networks,18-10-2025,9:00 AM-12:00 PM,3
+ECE,EC205,Chips,19-10-2025,2:00 PM-5:00 PM,4

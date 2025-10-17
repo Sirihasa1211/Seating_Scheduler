@@ -1,0 +1,17 @@
+Department,CourseCode,CourseName,ExamDate,ExamTime,Year
+CSE,CS101,Programming Fundamentals,18-10-2025,9:00 AM-12:00 PM,1
+CSE,CS102,Data Structures,18-10-2025,2:00 PM-5:00 PM,2
+CSE,CS201,Operating Systems,19-10-2025,9:00 AM-12:00 PM,3
+CSE,CS202,Database Systems,19-10-2025,2:00 PM-5:00 PM,4
+ECE,EC101,Circuit Theory,18-10-2025,9:00 AM-12:00 PM,1
+ECE,EC102,Digital Electronics,18-10-2025,2:00 PM-5:00 PM,2
+ECE,EC201,Communication Systems,19-10-2025,9:00 AM-12:00 PM,3
+ECE,EC202,Signals & Systems,19-10-2025,2:00 PM-5:00 PM,4
+MECH,ME101,Engineering Mechanics,20-10-2025,9:00 AM-12:00 PM,1
+MECH,ME102,Thermodynamics,20-10-2025,2:00 PM-5:00 PM,2
+MECH,ME201,Fluid Mechanics,21-10-2025,9:00 AM-12:00 PM,3
+MECH,ME202,Machine Design,21-10-2025,2:00 PM-5:00 PM,4
+CIVIL,CE101,Engineering Drawing,20-10-2025,9:00 AM-12:00 PM,1
+CIVIL,CE102,Strength of Materials,20-10-2025,2:00 PM-5:00 PM,2
+CIVIL,CE201,Structural Analysis,21-10-2025,9:00 AM-12:00 PM,3
+CIVIL,CE202,Transportation Engineering,21-10-2025,2:00 PM-5:00 PM,4

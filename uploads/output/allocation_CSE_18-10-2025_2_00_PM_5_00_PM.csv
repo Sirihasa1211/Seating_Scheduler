@@ -1,0 +1,4 @@
+Department,Section,Room,RollRange,TotalStudents
+CSE,B,Room3,CSE_B01 - CSE_B20,18
+CSE,A,Room2,CSE_A01 - CSE_A16,16
+CSE,A,Room4,CSE_A17 - CSE_A17,1

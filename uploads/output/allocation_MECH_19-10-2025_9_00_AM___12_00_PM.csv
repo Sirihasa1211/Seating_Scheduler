@@ -1,0 +1,4 @@
+Department,Section,Room,RollRange,TotalStudents
+MECH,A,Room3,MECH_A01 - MECH_B01,18
+MECH,B,Room4,MECH_B02 - MECH_B17,14
+MECH,B,Room2,MECH_B18 - MECH_C03,6
