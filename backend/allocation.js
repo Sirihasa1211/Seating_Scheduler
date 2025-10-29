@@ -10,7 +10,7 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const BUCKET = 'allocations';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ----------------- Helpers -----------------
+//helpers
 function normalizeRowKeys(row) {
   const out = {};
   for (const k in row) {
@@ -54,14 +54,13 @@ async function uploadCSVToSupabase(filename, content) {
 
   if (error) {
     console.error('Supabase upload error:', error);
-    throw error; // ❌ Important: throw here if you want the backend to report
+    throw error; //throw here if you want the backend to report
   } else {
     console.log(`Uploaded ${filename} to Supabase bucket "${BUCKET}"`);
   }
 }
 
-
-// ----------------- Room Helpers -----------------
+//
 function getRoomCaps(rooms) {
   return rooms.map(r => ({
     roomno: String(r.roomno || ''),
@@ -70,21 +69,44 @@ function getRoomCaps(rooms) {
   })).filter(r => r.capacity > 0);
 }
 
-// ----------------- MinHeap -----------------
+//MinHeap
 class MinHeap {
   constructor() { this.data = []; }
   push(obj) { this.data.push(obj); this._heapifyUp(); }
-  pop() { if (!this.data.length) return null; const top = this.data[0]; const last = this.data.pop(); if (this.data.length) { this.data[0] = last; this._heapifyDown(); } return top; }
-  _heapifyUp() { let i = this.data.length - 1; while (i > 0) { const parent = Math.floor((i - 1) / 2); if (this.data[i].capacity >= this.data[parent].capacity) break; [this.data[i], this.data[parent]] = [this.data[parent], this.data[i]]; i = parent; } }
-  _heapifyDown() { let i = 0; const n = this.data.length; while (true) { let smallest = i; const l = 2 * i + 1, r = 2 * i + 2; if (l < n && this.data[l].capacity < this.data[smallest].capacity) smallest = l; if (r < n && this.data[r].capacity < this.data[smallest].capacity) smallest = r; if (smallest === i) break; [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]]; i = smallest; } }
+  pop() { if (!this.data.length) return null; 
+    const top = this.data[0]; 
+    const last = this.data.pop(); 
+    if (this.data.length) 
+      { this.data[0] = last;
+        this._heapifyDown();
+      } 
+      return top; }
+  _heapifyUp()
+   { let i = this.data.length - 1; 
+    while (i > 0) 
+    { const parent = Math.floor((i - 1) / 2); 
+    if (this.data[i].capacity >= this.data[parent].capacity)
+      break; 
+      [this.data[i], this.data[parent]] = [this.data[parent], this.data[i]];
+      i = parent; } }
+  _heapifyDown() 
+  { let i = 0; const n = this.data.length;
+    while (true) 
+    { let smallest = i;
+      const l = 2 * i + 1, r = 2 * i + 2;
+       if (l < n && this.data[l].capacity < this.data[smallest].capacity) 
+        smallest = l; 
+        if (r < n && this.data[r].capacity < this.data[smallest].capacity) 
+          smallest = r; if (smallest === i) break;
+         [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]]; i = smallest; } }
   isEmpty() { return this.data.length === 0; }
 }
 
-// ----------------- Main Allocation -----------------
+//Main Allocation
 async function allocation(studentsCSV, coursesCSV, roomsCSV) {
   const start = Date.now();
 
-  // 1️⃣ Parse CSV strings
+  //parse CSV strings
   const [students, courses, rooms] = await Promise.all([
     parseCSVString(studentsCSV),
     parseCSVString(coursesCSV),
@@ -94,7 +116,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
   const baseRoomCaps = getRoomCaps(rooms);
   if (!baseRoomCaps.length) throw new Error('No valid rooms.');
 
-  // 2️⃣ Valid Dept-Year combos (only if exams exist)
+  //valid dept-year combos(only if exams exist)
   const validDeptYears = new Set();
   for (const c of courses) {
     const dept = String(c.department || '').trim();
@@ -102,7 +124,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
     if (dept && year) validDeptYears.add(`${dept}|${year}`);
   }
 
-  // 3️⃣ Precompute sections by Dept-Year-Section
+  //Precompute sections by Dept-Year-Section
   const deptYearSections = new Map();
   for (const s of students) {
     const dept = String(s.department || '').trim();
@@ -115,7 +137,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
     deptYearSections.get(key).students.push({ rollno: roll });
   }
 
-  // 4️⃣ Map exam slots
+  //Map exam slots
   const examGroups = {};
   for (const c of courses) {
     const key = `${c.examdate || ''}|${c.examtime || ''}`;
@@ -127,7 +149,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
   const metrics = [];
   const roomCapacityMap = new Map(baseRoomCaps.map(r => [r.roomno, r.capacity]));
 
-  // 5️⃣ Allocation per slot
+  //Allocation per slot
   for (const slotKey of Object.keys(examGroups)) {
     const [date, time] = slotKey.split('|');
     const heap = new MinHeap();
@@ -166,7 +188,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
       }
     }
 
-    // Upload CSVs only for dept-year with actual data
+    //Upload CSVs only for dept-year with actual data
     for (const dept of new Set(slotOutputRows.map(r => r.Department))) {
       for (const year of new Set(slotOutputRows.map(r => r.Year))) {
         const rows = slotOutputRows.filter(r => r.Department === dept && r.Year === year);
@@ -179,7 +201,7 @@ console.log("Parsed CSVs:", { students: students.length, courses: courses.length
       }
     }
 
-    // Compute metrics per department
+    //Compute metrics per department
     const totalCapUsed = Array.from(roomUsage.entries()).reduce((sum, [r, assigned]) => sum + (roomCapacityMap.get(r) || 0), 0);
     const totalAssigned = Array.from(roomUsage.values()).reduce((sum, x) => sum + x, 0);
     const avgUtil = totalCapUsed ? totalAssigned / totalCapUsed : 0;
