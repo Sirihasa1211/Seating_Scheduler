@@ -7,6 +7,10 @@ const { validateCSVFile } = require('./csvValidator');
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
+const nodemailer = require('nodemailer');
+
+const BUCKET = 'allocations';
+
 // Test endpoint
 router.get('/test', (req, res) => res.send('Server working'));
 
@@ -58,15 +62,51 @@ router.post('/allocate', upload.fields([
 });
 
 // Email endpoint
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // or your preferred SMTP service
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// ---------------- Route ----------------
 router.post('/send-email', async (req, res) => {
   try {
-    const { department, filePath } = req.body;
-    if (!department || !filePath) return res.status(400).json({ error: 'Department and filePath required' });
+    const { department, filePath, toEmail } = req.body;
+    if (!department || !filePath || !toEmail)
+      return res.status(400).json({ error: 'Department, filePath, and toEmail required' });
 
-    console.log(`Sending email to ${department} with file ${filePath}`);
-    res.json({ success: true, msg: `Email sent to ${department}` });
+    // 1️⃣ Download CSV from Supabase
+    const { data, error } = await supabase
+      .storage
+      .from(BUCKET)
+      .download(filePath);
+
+    if (error) return res.status(500).json({ error: 'Supabase download failed: ' + JSON.stringify(error) });
+
+    const localFilePath = path.join(__dirname, filePath.split('/').pop()); // temp local file
+    const buffer = Buffer.from(await data.arrayBuffer());
+    fs.writeFileSync(localFilePath, buffer);
+
+    // 2️⃣ Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: toEmail,
+      subject: `Exam Allocation - ${department}`,
+      text: `Attached is the exam allocation CSV for ${department} department.`,
+      attachments: [
+        { filename: path.basename(localFilePath), path: localFilePath }
+      ]
+    });
+
+    // 3️⃣ Cleanup temp file
+    fs.unlinkSync(localFilePath);
+
+    res.json({ success: true, msg: `Email sent to ${department} (${toEmail})` });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
