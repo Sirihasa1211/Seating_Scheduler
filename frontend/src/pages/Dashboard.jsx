@@ -71,7 +71,7 @@ export default function Dashboard() {
   return {
     department,
     fileName,
-    filePath: `/downloads/${fileName}`, // adjust according to your backend
+    filePath: `${fileName}`, // adjust according to your backend
     fileSize: new Blob([content]).size // size in bytes
   };
 });
