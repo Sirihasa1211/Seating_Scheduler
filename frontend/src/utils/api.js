@@ -26,10 +26,19 @@ export const processAllocation = async (studentsFile, coursesFile, roomsFile) =>
 };
 
 export const downloadFile = async (filePath, fileName) => {
+  
   const { data, error } = await supabase.storage
     .from('allocations')
-    .download(filePath);
-  if (error) throw error;
+    .download(encodeURIComponent(filePath)); //encode URI component to handle special chars
+  console.log("downloadFile data:", fileName);
+  if (error) {
+   console.error('Supabase Storage Error:', {
+      message: error.message,
+      status: error.status,
+      hint: error.hint,
+    });
+    throw error;}
+
   const url = window.URL.createObjectURL(data);
   const a = document.createElement('a');
   a.href = url;
@@ -40,16 +49,21 @@ export const downloadFile = async (filePath, fileName) => {
   document.body.removeChild(a);
 };
 
-export const sendEmail = async (department, fileName, filePath) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/send-email`, {
+
+export const sendEmail = async (department, filePath) => {
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  const response = await fetch(`${API_URL}/api/send-email`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session?.access_token}`
-    },
-    body: JSON.stringify({ department, fileName, filePath })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ department, filePath }) // backend only needs department + filePath
   });
-  if (!response.ok) throw new Error('Email sending failed');
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Email sending failed: ' + errText);
+  }
+
   return response.json();
 };
+
